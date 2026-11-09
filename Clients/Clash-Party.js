@@ -1,8 +1,8 @@
 function main(config) {
   const base = "https://raw.githubusercontent.com/Prowinter/ProxyRuleSet/main/Shared";
   const groups = [
-    ["PR-Google", /香港/],
-    ["PR-YouTube", /日本/],
+    ["Global Search", /香港/],
+    ["Global Media", /日本/],
     ["PR-Proxy", /香港/],
   ];
   const names = (config.proxies || []).map(proxy => proxy.name)
@@ -12,16 +12,16 @@ function main(config) {
     throw new Error("The selected profile has no usable proxy nodes");
   }
 
-  config["proxy-groups"] = groups.map(([name, preferred]) => {
+  config["proxy-groups"] = [...groups.map(([name, preferred]) => {
     const ordered = names.filter(node => preferred.test(node))
       .concat(names.filter(node => !preferred.test(node)));
     const group = {name, type: "select"};
     if (ordered.length) group.proxies = ordered;
     if (providers.length) group.use = providers;
     return group;
-  });
-  config["rule-providers"] = {};
-  for (const set of ["Reject", "YouTube", "Google", "Proxy", "Direct"]) {
+  }), ...(config["proxy-groups"] || []).filter(group => !groups.some(([name]) => name === group.name))];
+  config["rule-providers"] ||= {};
+  for (const set of ["Reject", "GlobalMedia", "GlobalSearch", "Proxy", "Direct"]) {
     config["rule-providers"]["pr-" + set.toLowerCase()] = {
       type: "http", behavior: "classical", format: "text",
       url: base + "/" + set + ".list", path: "./rule_provider/pr-" + set.toLowerCase() + ".list",
@@ -30,12 +30,11 @@ function main(config) {
   }
   config.rules = [
     "RULE-SET,pr-reject,REJECT",
-    "RULE-SET,pr-youtube,PR-YouTube",
-    "RULE-SET,pr-google,PR-Google",
+    "RULE-SET,pr-globalmedia,Global Media",
+    "RULE-SET,pr-globalsearch,Global Search",
     "RULE-SET,pr-proxy,PR-Proxy",
     "RULE-SET,pr-direct,DIRECT",
-    "GEOIP,CN,DIRECT",
-    "MATCH,PR-Proxy",
+    ...(config.rules || []),
   ];
   return config;
 }
