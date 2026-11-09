@@ -1,0 +1,2 @@
+# Explicit common block rules. OpenWrt still uses AdGuard Home for DNS filtering.
+DOMAIN-SUFFIX,doubleclick.net
