@@ -10,3 +10,5 @@ DOMAIN-SUFFIX,youtube.googleapis.com
 DOMAIN-SUFFIX,googlevideo.com
 DOMAIN-SUFFIX,ytimg.com
 DOMAIN-SUFFIX,yt.be
+DOMAIN-SUFFIX,recaptcha.net
+DOMAIN-SUFFIX,gstatic.com
